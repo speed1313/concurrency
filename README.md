@@ -1,2 +1,2 @@
 # concurrency
-concurrency programming algorithms
+concurrent programming algorithms
