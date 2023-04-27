@@ -6,14 +6,14 @@ import (
 	"time"
 )
 
-func main(){
+func main() {
 	// atomic chopsticks
 	chopsticks := make([]sync.Mutex, 5)
 
-	for i := 0; i < 5; i++{
+	for i := 0; i < 5; i++ {
 		i := i
-		go func(i int){
-			for{
+		go func(i int) {
+			for {
 				// deadlock can happen more easily by increasing the number of Locks
 				chopsticks[i].Lock()
 				chopsticks[(i+1)%5].Lock()

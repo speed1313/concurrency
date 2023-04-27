@@ -6,81 +6,82 @@ import "fmt"
 // max: the maximum demand of each process
 // allocated: the number of resources of each type currently allocated to each process
 // need: the remaining resource need of each process
-func isSafe(available []int, allocated [][]int, need [][]int) bool{
-	work := make([]int, len(available))
+func isSafe(available []int, allocated [][]int, need [][]int) bool {
+	N := len(allocated)
+	M := len(available)
+	work := make([]int, N)
 	copy(work, available)
-	finish := make([]bool, len(allocated))
-	for i := 0; i < len(allocated); i++{
-		if(finish[i] != false){
+	finish := make([]bool, N)
+	for i := 0; i < N; i++ {
+		if finish[i] != false {
 			continue
 		}
 		counter := 0
-		for j := 0; j < len(need[i]); j++{
-			if(need[i][j] <= work[j]){
+		for j := 0; j < M; j++ {
+			if need[i][j] <= work[j] {
 				counter++
 			}
 		}
-		if(counter == len(need[i])){
-			for j := 0; j < len(work); j++{
+		if counter == M {
+			for j := 0; j < M; j++ {
 				work[j] += allocated[i][j]
 			}
 			finish[i] = true
-			i = -1
+			i = -1 // because of this line, this algorithm is O(m*n^2)
 			continue
 		}
 	}
-	for i := 0; i < len(finish); i++{
-		if(finish[i] == false){
+	for i := 0; i < N; i++ {
+		if finish[i] == false {
 			return false
 		}
 	}
 	return true
 }
 
-func checkRequest(request []int, need [][]int, process int, available []int, allocated [][]int){
+func checkRequest(request []int, need [][]int, process int, available []int, allocated [][]int) {
 
-	for i := 0; i < len(request); i++{
-		if(request[i] <= need[process][i]){
+	for i := 0; i < len(request); i++ {
+		if request[i] <= need[process][i] {
 			continue
-		}else{
+		} else {
 			fmt.Println("Error: request > need")
 			return
 		}
 	}
-	for i := 0; i < len(request); i++{
-		if(request[i] <= available[i]){
+	for i := 0; i < len(request); i++ {
+		if request[i] <= available[i] {
 			continue
-		}else{
+		} else {
 			fmt.Println("Error: request > available")
 			return
 		}
 	}
 
-	for i := 0; i < len(available); i++{
+	for i := 0; i < len(available); i++ {
 		available[i] -= request[i]
 		allocated[process][i] += request[i]
 		need[process][i] -= request[i]
 	}
 	isSafe := isSafe(available, allocated, need)
 	fmt.Println("isSafe: ", isSafe)
-	if !isSafe{
-		for i := 0; i < len(available); i++{
+	if !isSafe {
+		for i := 0; i < len(available); i++ {
 			available[i] += request[i]
 			allocated[process][i] -= request[i]
 			need[process][i] += request[i]
 		}
 	}
 
-
 }
 
-func main(){
+func main() {
 	available := []int{3, 3, 2}
 	max := [][]int{{7, 5, 3}, {3, 2, 2}, {9, 0, 2}, {2, 2, 2}, {4, 3, 3}}
 	allocated := [][]int{{0, 1, 0}, {2, 0, 0}, {3, 0, 2}, {2, 1, 1}, {0, 0, 2}}
 	need := max
-	for i := 0; i < len(max); i++{
-		for j := 0; j < len(max[i]); j++{
+	for i := 0; i < len(max); i++ {
+		for j := 0; j < len(max[i]); j++ {
 			need[i][j] = max[i][j] - allocated[i][j]
 		}
 	}

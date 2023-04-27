@@ -5,10 +5,11 @@ import (
 	"sync"
 	"time"
 )
-func main(){
+
+func main() {
 	var mu sync.Mutex
 	var mu2 sync.Mutex
-	go func(){
+	go func() {
 		mu.Lock()
 		time.Sleep(1 * time.Millisecond)
 		mu2.Lock()
@@ -16,7 +17,7 @@ func main(){
 		mu.Unlock()
 		mu2.Unlock()
 	}()
-	go func(){
+	go func() {
 
 		mu2.Lock()
 		time.Sleep(1 * time.Millisecond)
